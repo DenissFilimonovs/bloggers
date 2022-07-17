@@ -63,7 +63,10 @@ app.put('bloggers/:id',(req:Request,res:Response) => {
         res.status(400).send({
             errorsMessages:[{
                 message: 'Incorrect title',
-                field: 'title'
+                field: 'youtubeUrl'
+            },{
+                message: 'Incorrect title',
+                field: 'name'
             }]
         })
         return
