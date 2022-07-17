@@ -105,11 +105,14 @@ app.get('/posts/:postsId', (req:Request,res:Response) => {
 
 app.post('/posts',(req:Request,res:Response) => {
     let title = req.body.title;
-    if(!title) {
+    if(!title || typeof title !=='string' || !title.trim()) {
         res.status(400).send({
             errorsMessages: [{
-                'message': 'Incorrect name',
-                'field': 'name'
+                message: "Incorrect name",
+                field: "youtubeUrl"
+            }, {
+                message: "Incorrect name",
+                field: "name"
             }]
         })
         return;
@@ -127,11 +130,14 @@ app.post('/posts',(req:Request,res:Response) => {
 })
 app.put('posts/:id',(req:Request,res:Response) => {
     let title = req.body.title
-    if(!title) {
+    if(!title || typeof title !=='string' || !title.trim()) {
         res.status(400).send({
             errorsMessages:[{
-                message: 'Incorrect title',
-                field: 'title'
+                message: "Incorrect name",
+                field: "youtubeUrl"
+            },{
+                message: "Incorrect name",
+                field: "name"
             }]
         })
         return
@@ -142,7 +148,7 @@ app.put('posts/:id',(req:Request,res:Response) => {
         post.title = title;
         res.status(204).send(post)
     }else {
-        res.send(404)
+        res.send(400)
     }
 })
 app.delete('/posts/:postId',(req:Request,res:Response) => {
