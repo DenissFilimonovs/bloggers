@@ -42,16 +42,19 @@ app.post('/bloggers',(req:Request,res:Response) => {
     if(!name) {
         res.status(400).send({
             errorsMessages: [{
-                'message': 'Incorrect name',
-                'field': 'name'
+                message: "Incorrect name",
+                field: "youtubeUrl"
+            },{
+                message: "Incorrect name",
+                field: "name"
             }]
         })
         return;
     }
     const newBlogger = {
         id: Number(new Date()),
-        name: name,
-        youtubeUrl: 'https://www.youtube.com/channel/UCU0dumcch7RNqHPMQaVsfdK'
+        name: "somename",
+        youtubeUrl: "invalid-url"
     }
     bloggers.push(newBlogger)
     res.status(201).send(newBlogger)
@@ -64,6 +67,9 @@ app.put('bloggers/:id',(req:Request,res:Response) => {
             errorsMessages:[{
                 message: 'Incorrect title',
                 field: 'youtubeUrl'
+            },{
+                message: "Incorrect name",
+                field: "name"
             }]
         })
         return
@@ -105,7 +111,7 @@ app.get('/posts/:postsId', (req:Request,res:Response) => {
 
 app.post('/posts',(req:Request,res:Response) => {
     let title = req.body.title;
-    if(!title || typeof title !=='string' || !title.trim()) {
+    if(!title || typeof title !=='string' || !title.trim() || title.length>31) {
         res.status(400).send({
             errorsMessages: [{
                 message: "Incorrect name",
@@ -130,7 +136,7 @@ app.post('/posts',(req:Request,res:Response) => {
 })
 app.put('posts/:id',(req:Request,res:Response) => {
     let title = req.body.title
-    if(!title || typeof title !=='string' || !title.trim()) {
+    if(!title || typeof title !=='string' || !title.trim() || title.length<31) {
         res.status(400).send({
             errorsMessages:[{
                 message: "Incorrect name",
@@ -148,7 +154,7 @@ app.put('posts/:id',(req:Request,res:Response) => {
         post.title = title;
         res.status(204).send(post)
     }else {
-        res.send(400)
+        res.send(404)
     }
 })
 app.delete('/posts/:postId',(req:Request,res:Response) => {
