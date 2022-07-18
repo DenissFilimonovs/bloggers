@@ -74,10 +74,10 @@ app.put('bloggers/:id',(req:Request,res:Response) => {
         })
         return
     }
-    const id = +req.paras.id;
+    const id = +req.params.id;
     const blogger = bloggers.find(b=>b.id===id)
     if(blogger) {
-        blogger.name = 'new name';
+        blogger.name = 'new+ name';
         blogger.youtubeUrl = "https://someurl.com"
         res.status(204).send(blogger)
     }else {
