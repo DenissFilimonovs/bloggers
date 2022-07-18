@@ -137,7 +137,7 @@ app.post('/posts',(req:Request,res:Response) => {
     posts.push(newPost)
     res.status(201).send(newPost)
 })
-app.put('posts/:id',(req:Request,res:Response) => {
+app.put('/posts/:id',(req:Request,res:Response) => {
     let title = req.body.title
     if(!title || typeof title !=='string' || !title.trim() || title.length<31) {
         res.status(400).send({
