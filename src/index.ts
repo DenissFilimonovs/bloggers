@@ -54,7 +54,7 @@ app.post('/bloggers',(req:Request,res:Response) => {
     const newBlogger = {
         id: Number(new Date()),
         name: "somename",
-        youtubeUrl: "invalid-url"
+        youtubeUrl: "someUrl"
     }
     bloggers.push(newBlogger)
     res.status(201).send(newBlogger)
@@ -77,7 +77,8 @@ app.put('bloggers/:id',(req:Request,res:Response) => {
     const id = +req.params.id;
     const blogger = bloggers.find(b=>b.id===id)
     if(blogger) {
-        blogger.name = name;
+        blogger.name = 'new name';
+        blogger.youtubeUrl = "https://someurl.com"
         res.status(204).send(blogger)
     }else {
         res.send(404)
@@ -125,11 +126,11 @@ app.post('/posts',(req:Request,res:Response) => {
     }
     const newPost = {
         id: Number(new Date()),
-        title: title,
+        title: 'title',
         shortDescription:'No video anymore',
-        content:'Video',
-        bloggerId: 0,
-        bloggerName:'Jurijs'
+        content:'valid',
+        bloggerId: Number(new Date()),
+        bloggerName:'Vasja'
     }
     posts.push(newPost)
     res.status(201).send(newPost)
