@@ -60,7 +60,9 @@ app.post('/bloggers',(req:Request,res:Response) => {
     res.status(201).send(newBlogger)
 })
 
-app.put('bloggers/:id',(req:Request,res:Response) => {
+app.put('/bloggers/:id',(req:Request,res:Response) => {
+
+    console.log('bloggersss')
     let name = req.body.name
     if(!name) {
         res.status(400).send({
