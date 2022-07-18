@@ -121,12 +121,7 @@ app.get('/posts/:postsId', (req:Request,res:Response) => {
 
 app.post('/posts',(req:Request,res:Response) => {
     let title = req.body.title;
-    let shortDescription = req.body.shortDescription
-    let content = req.body.content
-    let bloggerId = req.body.bloggerId
-    const errors = []
-
-    if(!title.trim() || typeof title !=='string' ||  title.length>31) {
+    if(!title || typeof title !=='string' || !title.trim() || title.length>31) {
         res.status(400).send({
             errorsMessages: [{
                 message: "Incorrect name",
@@ -137,29 +132,6 @@ app.post('/posts',(req:Request,res:Response) => {
             }]
         })
         return;
-    }
-    if(!shortDescription.trim() || typeof shortDescription !=='string' || shortDescription.length < 100) {
-        errors.push({
-            message: "Incorrect title",
-            field: "not bloggers"
-        })
-    }
-    if(!content.trim() || typeof content !=='string' || content.length < 1000) {
-        errors.push({
-            message: "Incorrect title",
-            field: "not bloggers"
-        })
-    }
-    if(!bloggerId.trim() || typeof bloggerId !=='number') {
-        errors.push({
-            message: "Incorrect title",
-            field: "not bloggers"
-        })
-    }
-
-    if (errors.length) {
-        res.status(400).send({errorsMessages: errors})
-        return
     }
     const newPost = {
         id: Number(new Date()),
