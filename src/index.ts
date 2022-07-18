@@ -74,7 +74,7 @@ app.put('bloggers/:id',(req:Request,res:Response) => {
         })
         return
     }
-    const id = +req.params.id;
+    const id = +req.paras.id;
     const blogger = bloggers.find(b=>b.id===id)
     if(blogger) {
         blogger.name = 'new name';
