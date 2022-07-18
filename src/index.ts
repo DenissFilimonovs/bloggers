@@ -61,17 +61,22 @@ app.post('/bloggers',(req:Request,res:Response) => {
 })
 
 app.put('/bloggers/:id',(req:Request,res:Response) => {
-
-    console.log('bloggersss')
     let name = req.body.name
+    let youtubeUrl = req.body.youtubeUrl
     if(!name) {
         res.status(400).send({
             errorsMessages:[{
                 message: 'Incorrect title',
                 field: 'youtubeUrl'
-            },{
-                message: "Incorrect name",
-                field: "name"
+            }]
+        })
+        return
+    }
+    if(!youtubeUrl) {
+        res.status(400).send({
+            errorsMessages:[{
+                message: 'Incorrect title',
+                field: 'youtubeUrl'
             }]
         })
         return
@@ -139,18 +144,44 @@ app.post('/posts',(req:Request,res:Response) => {
 })
 app.put('/posts/:id',(req:Request,res:Response) => {
     let title = req.body.title
-    if(!title || typeof title !=='string' || !title.trim() || title.length<31) {
-        res.status(400).send({
-            errorsMessages:[{
-                message: "Incorrect name",
-                field: "youtubeUrl"
-            },{
-                message: "Incorrect name",
-                field: "name"
-            }]
+    let shortDescription = req.body.shortDescription
+    let content = req.body.content
+    let bloggerId = req.body.bloggerId
+    //field(not bloogera) , 4erez if najti bloggera ,
+
+
+    const errors = []
+
+    if(!title.trim() || typeof title !=='string' || title.length < 30) {
+        errors.push({
+                message: "Incorrect title",
+                field: "not bloggers"
         })
+    }
+    if(!shortDescription.trim() || typeof shortDescription !=='string' || shortDescription.length < 100) {
+        errors.push({
+            message: "Incorrect title",
+            field: "not bloggers"
+        })
+    }
+    if(!content.trim() || typeof content !=='string' || content.length < 1000) {
+        errors.push({
+            message: "Incorrect title",
+            field: "not bloggers"
+        })
+    }
+    if(!bloggerId.trim() || typeof bloggerId !=='number') {
+        errors.push({
+            message: "Incorrect title",
+            field: "not bloggers"
+        })
+    }
+
+    if (errors.length) {
+        res.status(400).send({errorsMessages: errors})
         return
     }
+
     const id = +req.params.id;
     const post = posts.find(b=>b.id===id)
     if(post) {
@@ -160,6 +191,7 @@ app.put('/posts/:id',(req:Request,res:Response) => {
         res.send(404)
     }
 })
+
 app.delete('/posts/:postId',(req:Request,res:Response) => {
     const id = +req.params.postId
     const newPost = posts.filter(p=>p.id !== id)
