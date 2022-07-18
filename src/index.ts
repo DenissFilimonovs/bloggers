@@ -39,8 +39,7 @@ app.get('/bloggers/:bloggerId', (req:Request,res:Response) => {
 
 app.post('/bloggers',(req:Request,res:Response) => {
     let name = req.body.name;
-    let youtubeUrl = req.body.youtubeUrl
-    if(!name || !youtubeUrl) {
+    if(!name) {
         res.status(400).send({
             errorsMessages: [{
                 message: "Incorrect name",
@@ -110,7 +109,6 @@ app.get('/posts', (req:Request,res:Response) => {
 
 app.get('/posts/:postsId', (req:Request,res:Response) => {
     const id = +req.params.postsId
-
     const post = posts.find(p=>p.id === id)
     if(post) {
         res.status(200).send(post)
@@ -176,6 +174,7 @@ app.put('/posts/:id',(req:Request,res:Response) => {
         errors.push({
             message: "Incorrect title",
             field: "not bloggers"
+
         })
     }
 
