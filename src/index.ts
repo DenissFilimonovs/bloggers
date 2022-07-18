@@ -65,7 +65,7 @@ app.put('bloggers/:id',(req:Request,res:Response) => {
     if(!name) {
         res.status(400).send({
             errorsMessages:[{
-                message: 'Incorect title',
+                message: 'Incorrect title',
                 field: 'youtubeUrl'
             },{
                 message: "Incorrect name",
@@ -77,7 +77,7 @@ app.put('bloggers/:id',(req:Request,res:Response) => {
     const id = +req.params.id;
     const blogger = bloggers.find(b=>b.id===id)
     if(blogger) {
-        blogger.name = 'new+ name';
+        blogger.name = 'new name';
         blogger.youtubeUrl = "https://someurl.com"
         res.status(204).send(blogger)
     }else {
