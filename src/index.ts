@@ -39,7 +39,8 @@ app.get('/bloggers/:bloggerId', (req:Request,res:Response) => {
 
 app.post('/bloggers',(req:Request,res:Response) => {
     let name = req.body.name;
-    if(!name) {
+    let youtubeUrl = req.body.youtubeUrl
+    if(!name || !youtubeUrl) {
         res.status(400).send({
             errorsMessages: [{
                 message: "Incorrect name",
@@ -109,6 +110,7 @@ app.get('/posts', (req:Request,res:Response) => {
 
 app.get('/posts/:postsId', (req:Request,res:Response) => {
     const id = +req.params.postsId
+
     const post = posts.find(p=>p.id === id)
     if(post) {
         res.status(200).send(post)
@@ -119,7 +121,12 @@ app.get('/posts/:postsId', (req:Request,res:Response) => {
 
 app.post('/posts',(req:Request,res:Response) => {
     let title = req.body.title;
-    if(!title || typeof title !=='string' || !title.trim() || title.length>31) {
+    let shortDescription = req.body.shortDescription
+    let content = req.body.content
+    let bloggerId = req.body.bloggerId
+    const errors = []
+
+    if(!title.trim() || typeof title !=='string' ||  title.length>31) {
         res.status(400).send({
             errorsMessages: [{
                 message: "Incorrect name",
@@ -130,6 +137,29 @@ app.post('/posts',(req:Request,res:Response) => {
             }]
         })
         return;
+    }
+    if(!shortDescription.trim() || typeof shortDescription !=='string' || shortDescription.length < 100) {
+        errors.push({
+            message: "Incorrect title",
+            field: "not bloggers"
+        })
+    }
+    if(!content.trim() || typeof content !=='string' || content.length < 1000) {
+        errors.push({
+            message: "Incorrect title",
+            field: "not bloggers"
+        })
+    }
+    if(!bloggerId.trim() || typeof bloggerId !=='number') {
+        errors.push({
+            message: "Incorrect title",
+            field: "not bloggers"
+        })
+    }
+
+    if (errors.length) {
+        res.status(400).send({errorsMessages: errors})
+        return
     }
     const newPost = {
         id: Number(new Date()),
