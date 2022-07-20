@@ -119,7 +119,7 @@ app.get('/posts/:postsId', (req:Request,res:Response) => {
 
 app.post('/posts',(req:Request,res:Response) => {
     let title = req.body.title;
-    if(!title || typeof title !=='string' || !title.trim() || title.length>31) {
+    if(!title.trim() || typeof title !=='string' || title.length>31) {
         res.status(400).send({
             errorsMessages: [{
                 message: "Incorrect name",
@@ -149,28 +149,43 @@ app.put('/posts/:id',(req:Request,res:Response) => {
     let bloggerId = req.body.bloggerId
     //field(not bloogera) , 4erez if najti bloggera ,
 
+    // const blogger = getBloggerById()
+    //if (!blogger).... return
+
+    const blogger = getBloggerById()
+    if(!blogger) {
+
+    }
+
+    const trimmedTitle = title?.trim();
+    const trimmedshortDescription = shortDescription?.trim()
+    const trimmedcontent = content?.trim()
+    const trimmedbloggerId = bloggerId?.trim()
 
     const errors = []
 
-    if(!title.trim() || typeof title !=='string' || title.length < 30) {
+    if(!trimmedTitle || typeof title !=='string' || title.length < 30) {
         errors.push({
                 message: "Incorrect title",
                 field: "not bloggers"
         })
     }
-    if(!shortDescription.trim() || typeof shortDescription !=='string' || shortDescription.length < 100) {
+
+    if(!trimmedshortDescription || typeof shortDescription !=='string' || shortDescription.length < 100) {
         errors.push({
             message: "Incorrect title",
             field: "not bloggers"
         })
     }
-    if(!content.trim() || typeof content !=='string' || content.length < 1000) {
+
+    if(!trimmedcontent || typeof content !=='string' || content.length < 1000) {
         errors.push({
             message: "Incorrect title",
             field: "not bloggers"
         })
     }
-    if(!bloggerId.trim() || typeof bloggerId !=='number') {
+
+    if (!trimmedbloggerId|| typeof bloggerId !=='number') {
         errors.push({
             message: "Incorrect title",
             field: "not bloggers"
@@ -187,9 +202,9 @@ app.put('/posts/:id',(req:Request,res:Response) => {
     const post = posts.find(b=>b.id===id)
     if(post) {
         post.title = title;
-        res.status(204).send(post)
+        res.sendStatus(200)
     }else {
-        res.send(404)
+        res.sendStatus(404)
     }
 })
 
