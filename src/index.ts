@@ -39,7 +39,8 @@ app.get('/bloggers/:bloggerId', (req:Request,res:Response) => {
 
 app.post('/bloggers',(req:Request,res:Response) => {
     let name = req.body.name;
-    if(!name) {
+    let youtubeUrl = req.body.youtubeUrl
+    if(!name || !youtubeUrl) {
         res.status(400).send({
             errorsMessages: [{
                 message: "Incorrect name",
@@ -53,8 +54,8 @@ app.post('/bloggers',(req:Request,res:Response) => {
     }
     const newBlogger = {
         id: Number(new Date()),
-        name: "somename",
-        youtubeUrl: "someUrl"
+        name: name,
+        youtubeUrl: youtubeUrl
     }
     bloggers.push(newBlogger)
     res.status(201).send(newBlogger)
@@ -84,8 +85,8 @@ app.put('/bloggers/:id',(req:Request,res:Response) => {
     const id = +req.params.id;
     const blogger = bloggers.find(b=>b.id===id)
     if(blogger) {
-        blogger.name = 'new name';
-        blogger.youtubeUrl = "https://someurl.com"
+        blogger.name = name;
+        blogger.youtubeUrl = youtubeUrl;
         res.status(204).send(blogger)
     }else {
         res.send(404)
@@ -118,12 +119,17 @@ app.get('/posts/:postsId', (req:Request,res:Response) => {
 })
 
 app.post('/posts',(req:Request,res:Response) => {
+    let id = req.body.id
     let title = req.body.title;
+    let shortDescription = req.body.shortDescription
+    let content = req.body.content
+    let bloggerId = req.body.bloggerId
+    let bloggerName = req.body.bloggerName
     if(!title.trim() || typeof title !=='string' || title.length>31) {
         res.status(400).send({
             errorsMessages: [{
                 message: "Incorrect name",
-                field: "youtubeUrl"
+                field: "name"
             }, {
                 message: "Incorrect name",
                 field: "name"
@@ -133,11 +139,11 @@ app.post('/posts',(req:Request,res:Response) => {
     }
     const newPost = {
         id: Number(new Date()),
-        title: 'title',
-        shortDescription:'No video anymore',
-        content:'valid',
+        title: title,
+        shortDescription: shortDescription,
+        content: content,
         bloggerId: Number(new Date()),
-        bloggerName:'Vasja'
+        bloggerName: bloggerName,
     }
     posts.push(newPost)
     res.status(201).send(newPost)
@@ -147,16 +153,13 @@ app.put('/posts/:id',(req:Request,res:Response) => {
     let shortDescription = req.body.shortDescription
     let content = req.body.content
     let bloggerId = req.body.bloggerId
-    //field(not bloogera) , 4erez if najti bloggera ,
-
-    // const blogger = getBloggerById()
-    //if (!blogger).... return
-
+    let bloggerName = req.body.bloggerName
 
     const trimmedTitle = title?.trim();
     const trimmedshortDescription = shortDescription?.trim()
     const trimmedcontent = content?.trim()
     const trimmedbloggerId = bloggerId?.trim()
+    const trimmedbloggerName = bloggerName?.trim()
 
     const errors = []
 
@@ -189,6 +192,13 @@ app.put('/posts/:id',(req:Request,res:Response) => {
         })
     }
 
+    if(!trimmedbloggerName || typeof bloggerName !== 'string') {
+        errors.push({
+            message: "Incorrect title",
+            field: "not bloggers"
+        })
+    }
+
     if (errors.length) {
         res.status(400).send({errorsMessages: errors})
         return
@@ -197,7 +207,10 @@ app.put('/posts/:id',(req:Request,res:Response) => {
     const id = +req.params.id;
     const post = posts.find(b=>b.id===id)
     if(post) {
-        post.title = title;
+        post.title = trimmedTitle;
+        post.content= trimmedcontent
+        post.shortDescription = trimmedshortDescription
+        post.bloggerId = trimmedbloggerId
         res.sendStatus(200)
     }else {
         res.sendStatus(404)
