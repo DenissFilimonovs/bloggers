@@ -152,10 +152,6 @@ app.put('/posts/:id',(req:Request,res:Response) => {
     // const blogger = getBloggerById()
     //if (!blogger).... return
 
-    const blogger = getBloggerById()
-    if(!blogger) {
-
-    }
 
     const trimmedTitle = title?.trim();
     const trimmedshortDescription = shortDescription?.trim()
