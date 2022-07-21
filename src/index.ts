@@ -15,10 +15,22 @@ let bloggers = [
 ]
 
 let posts = [
-    {id:1, title:'Hello', shortDescription:'It is me', content:'Video', bloggerId: 0, bloggerName:'Deniss'},
-    {id:2, title:'Bue', shortDescription:'It is not me', content:'Stream', bloggerId: 0, bloggerName:'Vadims'},
-    {id:3, title:'I go out', shortDescription:'No video anymore', content:'Video', bloggerId: 0, bloggerName:'Jurijs'},
-]
+    {
+        id: 0,
+        title: "deploy to heroku",
+        shortDescription: "string",
+        content: "string",
+        bloggerId: 0,
+        bloggerName: "Dimych"
+    },
+    {
+        id: 1,
+        title: "junior interview",
+        shortDescription: "string",
+        content: "string",
+        bloggerId: 1,
+        bloggerName: "Timur"
+    }]
 
 const errors = {
     type: "error",
@@ -35,7 +47,7 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello from Express')
 })
 
-app.get('/hs_01/api/bloggers/:id', (req: Request, res: Response) => {
+app.get('/bloggers/:id', (req: Request, res: Response) => {
     const id = +req.params.id
     const blogger = bloggers.find(b => b.id === id)
     if (blogger) {
@@ -45,11 +57,11 @@ app.get('/hs_01/api/bloggers/:id', (req: Request, res: Response) => {
     }
 })
 
-app.get('/hs_01/api/bloggers/', (req: Request, res: Response) => {
+app.get('bloggers/', (req: Request, res: Response) => {
     res.send(bloggers)
 })
 
-app.post('/hs_01/api/bloggers/', (req: Request, res: Response) => {
+app.post('/bloggers/', (req: Request, res: Response) => {
     const id = +(new Date())
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
@@ -70,7 +82,7 @@ app.post('/hs_01/api/bloggers/', (req: Request, res: Response) => {
     }
 })
 
-app.put('/hs_01/api/bloggers/:id', (req: Request, res: Response) => {
+app.put('/bloggers/:id', (req: Request, res: Response) => {
     const id = +req.params.id
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
@@ -92,7 +104,7 @@ app.put('/hs_01/api/bloggers/:id', (req: Request, res: Response) => {
     }
 })
 
-app.delete('/hs_01/api/bloggers/:id', (req: Request, res: Response) => {
+app.delete('/bloggers/:id', (req: Request, res: Response) => {
     const id = +req.params.id
     const blogger = bloggers.find(b => b.id === id)
     if (typeof blogger === "undefined") {
@@ -108,7 +120,7 @@ app.delete('/hs_01/api/bloggers/:id', (req: Request, res: Response) => {
 })
 
 
-app.get('/hs_01/api/posts/:id', (req: Request, res: Response) => {
+app.get('/posts/:id', (req: Request, res: Response) => {
     const id = +req.params.id
     const post = posts.find(p => p.id === id)
     if (post) {
@@ -118,11 +130,11 @@ app.get('/hs_01/api/posts/:id', (req: Request, res: Response) => {
     }
 })
 
-app.get('/hs_01/api/posts/', (req: Request, res: Response) => {
+app.get('/posts/', (req: Request, res: Response) => {
     res.send(posts)
 })
 
-app.post('/hs_01/api/posts/', (req: Request, res: Response) => {
+app.post('/posts/', (req: Request, res: Response) => {
     const id = +(new Date())
     const title = req.body.title
     const shortDescription = req.body.shortDescription
@@ -154,7 +166,7 @@ app.post('/hs_01/api/posts/', (req: Request, res: Response) => {
 
 })
 
-app.put('/hs_01/api/posts/:id', (req: Request, res: Response) => {
+app.put('/posts/:id', (req: Request, res: Response) => {
     const id = +req.params.id
     const title = req.body.title
     const shortDescription = req.body.shortDescription
@@ -181,7 +193,7 @@ app.put('/hs_01/api/posts/:id', (req: Request, res: Response) => {
     }
 })
 
-app.delete('/hs_01/api/posts/:id', (req: Request, res: Response) => {
+app.delete('posts/:id', (req: Request, res: Response) => {
     const id = +req.params.id
     const post = posts.find(p => p.id === id)
     if (typeof post === "undefined") {
