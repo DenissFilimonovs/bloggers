@@ -57,11 +57,11 @@ app.get('/bloggers/:id', (req: Request, res: Response) => {
     }
 })
 
-app.get('bloggers/', (req: Request, res: Response) => {
+app.get('/bloggers', (req: Request, res: Response) => {
     res.send(bloggers)
 })
 
-app.post('/bloggers/', (req: Request, res: Response) => {
+app.post('/bloggers', (req: Request, res: Response) => {
     const id = +(new Date())
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
@@ -130,11 +130,11 @@ app.get('/posts/:id', (req: Request, res: Response) => {
     }
 })
 
-app.get('/posts/', (req: Request, res: Response) => {
+app.get('/posts', (req: Request, res: Response) => {
     res.send(posts)
 })
 
-app.post('/posts/', (req: Request, res: Response) => {
+app.post('/posts', (req: Request, res: Response) => {
     const id = +(new Date())
     const title = req.body.title
     const shortDescription = req.body.shortDescription
@@ -193,7 +193,7 @@ app.put('/posts/:id', (req: Request, res: Response) => {
     }
 })
 
-app.delete('posts/:id', (req: Request, res: Response) => {
+app.delete('/posts/:id', (req: Request, res: Response) => {
     const id = +req.params.id
     const post = posts.find(p => p.id === id)
     if (typeof post === "undefined") {
