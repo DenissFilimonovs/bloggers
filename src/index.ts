@@ -33,14 +33,7 @@ let posts = [
     }]
 
 const errors = {
-    type: "error",
-    title: "incorrect values",
-    status: 400,
-    detail: "input values must be a string",
-    instance: "string",
-    additionalProp1: "string",
-    additionalProp2: "string",
-    additionalProp3: "string"
+ errorsMessages: [{ message: 'string', field: "youtubeUrl" }, { message: 'string', field: "name" }]
 }
 
 app.get('/', (req: Request, res: Response) => {
@@ -66,7 +59,7 @@ app.post('/bloggers', (req: Request, res: Response) => {
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
     if ((typeof name || typeof youtubeUrl) !== "string") {
-        res.status(errors.status).send(errors)
+        res.status(400).send(errors)
     } else {
         const newBlogger = {
             id: id,
@@ -77,7 +70,7 @@ app.post('/bloggers', (req: Request, res: Response) => {
         if (newBlogger) {
             res.status(201).send(newBlogger)
         } else {
-            res.status(errors.status).send(errors)
+            res.status(400).send(errors)
         }
     }
 })
@@ -87,10 +80,10 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
     if ((typeof name || typeof youtubeUrl) === "undefined") {
-        res.status(errors.status).send(errors)
+        res.status(400).send(errors)
     } else {
         if ((typeof name || typeof youtubeUrl) !== "string") {
-            res.status(errors.status).send(errors)
+            res.status(400).send(errors)
         } else {
             const blogger = bloggers.find(b => b.id === id)
             if (blogger) {
@@ -98,7 +91,7 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
                 blogger.youtubeUrl = youtubeUrl
                 res.send(204)
             } else {
-                res.status(errors.status).send(errors)
+                res.status(400).send(errors)
             }
         }
     }
@@ -144,7 +137,7 @@ app.post('/posts', (req: Request, res: Response) => {
     if (blogger) {
         const bloggerName = blogger.name
         if (typeof title !== "string" || typeof shortDescription !== "string" || typeof content !== "string" || typeof bloggerId !== "number") {
-            res.status(errors.status).send(errors)
+            res.status(400).send(errors)
         } else {
             const newPost = {
                 id: id,
@@ -158,7 +151,7 @@ app.post('/posts', (req: Request, res: Response) => {
                 posts.push(newPost)
                 res.status(201).send(newPost)
             } else {
-                res.status(errors.status).send(errors)
+                res.status(400).send(errors)
             }
         }
     }
@@ -174,10 +167,10 @@ app.put('/posts/:id', (req: Request, res: Response) => {
     const bloggerId = req.body.bloggerId
     console.log(typeof bloggerId)
     if ((typeof title || typeof shortDescription || typeof content || typeof bloggerId) === "undefined") {
-        res.status(errors.status).send(errors)
+        res.status(400).send(errors)
     } else {
         if ((typeof title || typeof shortDescription || typeof content) !== "string" || typeof bloggerId !== "number") {
-            res.status(errors.status).send(errors)
+            res.status(400).send(errors)
         } else {
             const post = posts.find(p => p.id === id)
             if (post) {
