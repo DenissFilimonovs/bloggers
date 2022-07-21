@@ -32,175 +32,109 @@ let posts = [
         bloggerName: "Timur"
     }]
 
-const errors = {
- errorsMessages: [{ message: 'string', field: "youtubeUrl" }, { message: 'string', field: "name" }]
-}
-
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello from Express')
-})
-
-app.get('/bloggers/:id', (req: Request, res: Response) => {
-    const id = +req.params.id
-    const blogger = bloggers.find(b => b.id === id)
-    if (blogger) {
-        res.send(blogger)
-    } else {
-        res.send(404)
-    }
-})
-
 app.get('/bloggers', (req: Request, res: Response) => {
     res.send(bloggers)
 })
 
 app.post('/bloggers', (req: Request, res: Response) => {
-    const id = +(new Date())
-    const name = req.body.name
-    const youtubeUrl = req.body.youtubeUrl
-    if ((typeof name || typeof youtubeUrl) !== "string") {
-        res.status(400).send(errors)
-    } else {
-        const newBlogger = {
-            id: id,
-            name: name,
-            youtubeUrl: youtubeUrl
-        }
-        bloggers.push(newBlogger)
-        if (newBlogger) {
-            res.status(201).send(newBlogger)
-        } else {
-            res.status(400).send(errors)
-        }
+    const body = req.body
+    if (body) {
+        bloggers.push({...body, id: bloggers.length})
+        res.sendStatus(201)
     }
 })
 
+app.get(`/bloggers/:id`, (req: Request, res: Response) => {
+    const id = +req.params.id
+    const blogger = bloggers.find(i => i.id === id)
+    if (blogger) {
+        res.sendStatus(200).send(blogger)
+    }
+})
+
+
 app.put('/bloggers/:id', (req: Request, res: Response) => {
     const id = +req.params.id
-    const name = req.body.name
-    const youtubeUrl = req.body.youtubeUrl
-    if ((typeof name || typeof youtubeUrl) === "undefined") {
-        res.status(400).send(errors)
-    } else {
-        if ((typeof name || typeof youtubeUrl) !== "string") {
-            res.status(400).send(errors)
+    const blogger = bloggers.find(i => i.id === id)
+    if (blogger) {
+        if (req.body.hasOwnProperty('title') && req.body.hasOwnProperty('youtubeUrl')) {
+            blogger.name = req.body.title
+            blogger.youtubeUrl = req.body.youtubeUrl
         } else {
-            const blogger = bloggers.find(b => b.id === id)
-            if (blogger) {
-                blogger.name = name
-                blogger.youtubeUrl = youtubeUrl
-                res.send(400)
-            } else {
-                res.status(400).send(errors)
-            }
+            res.sendStatus(400)
         }
+        res.sendStatus(204)
+    } else {
+        res.sendStatus(404)
     }
 })
 
 app.delete('/bloggers/:id', (req: Request, res: Response) => {
     const id = +req.params.id
-    const blogger = bloggers.find(b => b.id === id)
-    if (typeof blogger === "undefined") {
-        res.status(404).send(errors)
+    if (id) {
+        bloggers = bloggers.filter(i => i.id !== +req.params.id)
+        res.sendStatus(204)
     } else {
-        for (let i = 0; i < bloggers.length; i++) {
-            if (bloggers[i].id === id) {
-                bloggers.splice(i, 1)
-            }
-        }
-        res.send(204)
+        res.sendStatus(404)
     }
 })
 
-
-app.get('/posts/:id', (req: Request, res: Response) => {
-    const id = +req.params.id
-    const post = posts.find(p => p.id === id)
-    if (post) {
-        res.send(post)
-    } else {
-        res.send(404)
-    }
-})
+// Posts
 
 app.get('/posts', (req: Request, res: Response) => {
-    res.send(posts)
+    res.status(200).send(posts)
 })
 
 app.post('/posts', (req: Request, res: Response) => {
-    const id = +(new Date())
-    const title = req.body.title
-    const shortDescription = req.body.shortDescription
-    const content = req.body.content
-    const bloggerId = +(req.body.bloggerId)
-    const blogger = bloggers.find(b => b.id === bloggerId)
-    if (blogger) {
-        const bloggerName = blogger.name
-        if (typeof title !== "string" || typeof shortDescription !== "string" || typeof content !== "string" || typeof bloggerId !== "number") {
-            res.status(400).send(errors)
-        } else {
-            const newPost = {
-                id: id,
-                title: title,
-                shortDescription: shortDescription,
-                content: content,
-                bloggerId: bloggerId,
-                bloggerName: bloggerName
-            }
-            if (newPost) {
-                posts.push(newPost)
-                res.status(201).send(newPost)
-            } else {
-                res.status(400).send(errors)
-            }
-        }
-    }
-
-
-})
-
-app.put('/posts/:id', (req: Request, res: Response) => {
-    const id = +req.params.id
-    const title = req.body.title
-    const shortDescription = req.body.shortDescription
-    const content = req.body.content
-    const bloggerId = req.body.bloggerId
-    console.log(typeof bloggerId)
-    if ((typeof title || typeof shortDescription || typeof content || typeof bloggerId) === "undefined") {
-        res.status(400).send(errors)
+    const body = req.body
+    if (body) {
+        res.status(201).send({
+            ...body,
+            id: posts.length + 1,
+            bloggerName: bloggers.find(i => i.id === body.bloggerId)?.name
+        })
     } else {
-        if ((typeof title || typeof shortDescription || typeof content) !== "string" || typeof bloggerId !== "number") {
-            res.status(400).send(errors)
-        } else {
-            const post = posts.find(p => p.id === id)
-            if (post) {
-                post.title = title
-                post.shortDescription = shortDescription
-                post.content = content
-                post.bloggerId = bloggerId
-                res.send(204)
-            } else {
-                res.status(404).send(errors)
-            }
-        }
+        res.sendStatus(400)
     }
 })
 
-app.delete('/posts/:id', (req: Request, res: Response) => {
+app.get('/posts:id', (req: Request, res: Response) => {
     const id = +req.params.id
-    const post = posts.find(p => p.id === id)
-    if (typeof post === "undefined") {
-        res.status(404).send(errors)
-    } else {
-        for (let i = 0; i < posts.length; i++) {
-            if (posts[i].id === id) {
-                posts.splice(i, 1)
-            }
+    const post = bloggers.find(i => i.id === id)
+    if (post) {
+        res.sendStatus(200).send(post)
+    }
+})
+
+
+app.put('/posts:id', (req: Request, res: Response) => {
+    const id = +req.params.id
+    const post = posts.find(i => i.id === id)
+    if (post) {
+        if (req.body.hasOwnProperty('title') && req.body.hasOwnProperty('shortDescription') && req.body.hasOwnProperty('content') && req.body.hasOwnProperty('bloggerId')) {
+            post.title = req.body.title
+            post.shortDescription = req.body.shortDescription
+            post.content = req.body.content
+            post.bloggerId = req.body.bloggerId
+        } else {
+            res.sendStatus(400)
         }
-        res.send(204)
+        res.sendStatus(204)
+    } else {
+        res.sendStatus(404)
+    }
+})
+
+app.delete('/posts:id', (req: Request, res: Response) => {
+    const id = +req.params.id
+    if (id) {
+        posts = posts.filter(i => i.id !== +req.params.id)
+        res.sendStatus(204)
+    } else {
+        res.sendStatus(404)
     }
 })
 
 app.listen(port, () => {
-    console.log(`Express app listening on port ${port}`)
+    console.log(`Example app listening on port ${port}`)
 })
