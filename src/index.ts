@@ -89,7 +89,7 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
             if (blogger) {
                 blogger.name = name
                 blogger.youtubeUrl = youtubeUrl
-                res.send(204)
+                res.send(400)
             } else {
                 res.status(400).send(errors)
             }
