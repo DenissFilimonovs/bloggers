@@ -40,7 +40,7 @@ app.post('/bloggers',  (req: Request, res: Response) => {
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
     const regEx = new RegExp('^https:\\/\\/([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
-    const found = regEx.test(youtubeUrl)
+
 
     let errors = []
 
@@ -51,7 +51,7 @@ app.post('/bloggers',  (req: Request, res: Response) => {
         })
     }
 
-    if (!youtubeUrl || typeof youtubeUrl !== 'string' || !youtubeUrl.trim() || youtubeUrl.length > 100 || !found) {
+    if (!youtubeUrl || typeof youtubeUrl !== 'string' || !youtubeUrl.trim() || youtubeUrl.length > 100  ) {
         errors.push({
             message: "Incorrect youtubeUrl",
             field: "youtubeUrl"
