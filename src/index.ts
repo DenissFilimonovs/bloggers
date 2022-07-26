@@ -1,140 +1,270 @@
-import express, {Request, Response} from 'express'
+import express, {Request, Response} from "express";
 import cors from 'cors'
 import bodyParser from "body-parser";
+import {type} from "os";
 
 const app = express()
-const port = process.env.PORT || 5000
-
-app.use(cors())
-app.use(bodyParser())
-
+const port = process.env.PORT || 3000
+const parserMiddleware = bodyParser({})
 let bloggers = [
-    {id: 1 , name: 'Deniss', youtubeUrl: 'https://www.youtube.com/channel/UCU0dumcch7RNqHPMQaVsfdQ'},
-    {id: 2 , name: 'Vadims', youtubeUrl: 'https://www.youtube.com/channel/UCU0dumcch7RNqHPMQaVsfdL'},
-    {id: 3 , name: 'Jurijs', youtubeUrl: 'https://www.youtube.com/channel/UCU0dumcch7RNqHPMQaVsfdK'},
+    {id: 1, name: 'Deniss', youtubeUrl: 'https://www.youtube.com/channel/UCU0dumcch7RNqHPMQaVsfdQ'},
+    {id: 2, name: 'Vadims', youtubeUrl: 'https://www.youtube.com/channel/UCU0dumcch7RNqHPMQaVsfdL'},
+    {id: 3, name: 'Jurijs', youtubeUrl: 'https://www.youtube.com/channel/UCU0dumcch7RNqHPMQaVsfdK'},
 ]
-
 let posts = [
-    {
-        id: 0,
-        title: "deploy to heroku",
-        shortDescription: "string",
-        content: "string",
-        bloggerId: 0,
-        bloggerName: "Dimych"
-    },
-    {
-        id: 1,
-        title: "junior interview",
-        shortDescription: "string",
-        content: "string",
-        bloggerId: 1,
-        bloggerName: "Timur"
-    }]
+    {id: 1, title: 'Hello', shortDescription: 'It is me', content: 'Video', bloggerId: 0, bloggerName: 'Deniss'},
+    {id: 2, title: 'Bue', shortDescription: 'It is not me', content: 'Stream', bloggerId: 0, bloggerName: 'Vadims'},
+]
+app.use(parserMiddleware)
+app.use(cors())
+
+
+app.get('/', (req: Request, res: Response) => {
+    let helloMessage = 'Hello World!!!'
+    res.send(helloMessage)
+})
 
 app.get('/bloggers', (req: Request, res: Response) => {
     res.send(bloggers)
 })
-
-app.post('/bloggers', (req: Request, res: Response) => {
-    const body = req.body
-    if (body) {
-        bloggers.push({...body, id: bloggers.length})
-        res.sendStatus(201)
+app.get('/bloggers/:id', (req: Request, res: Response) => {
+    const id = +req.params.id
+    const blogger = bloggers.find(p => p.id === id)
+    if (blogger) {
+        res.status(200).send(blogger)
+    }else {
+        res.send(404)
     }
 })
+app.post('/bloggers',  (req: Request, res: Response) => {
+    const name = req.body.name
+    const youtubeUrl = req.body.youtubeUrl
+    const regEx = new RegExp('^https:\\/\\/([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
+    const found = regEx.test(youtubeUrl)
 
-app.get(`/bloggers/:id`, (req: Request, res: Response) => {
-    const id = +req.params.id
-    const blogger = bloggers.find(i => i.id === id)
-    if (blogger) {
-        res.sendStatus(200).send(blogger)
+    let errors = []
+
+    if (!name || typeof name !== 'string' || !name.trim() || name.length > 15) {
+        errors.push({
+            message: "Incorrect name",
+            field: "name"
+        })
     }
-})
 
+    if (!youtubeUrl || typeof youtubeUrl !== 'string' || !youtubeUrl.trim() || youtubeUrl.length > 100 || !found) {
+        errors.push({
+            message: "Incorrect youtubeUrl",
+            field: "youtubeUrl"
+        })
+    }
 
-app.put('/bloggers/:id', (req: Request, res: Response) => {
-    const id = +req.params.id
-    const blogger = bloggers.find(i => i.id === id)
-    if (blogger) {
-        if (req.body.hasOwnProperty('title') && req.body.hasOwnProperty('youtubeUrl')) {
-            blogger.name = req.body.title
-            blogger.youtubeUrl = req.body.youtubeUrl
-        } else {
-            res.sendStatus(400)
-        }
-        res.sendStatus(204)
+    if (errors.length >0) {
+        res.status(400).send({errorsMessages: errors})
     } else {
-        res.sendStatus(404)
+        const newBlogger = {
+            id: +(new Date()),
+            name: req.body.name,
+            youtubeUrl: req.body.youtubeUrl
+        }
+        bloggers.push(newBlogger)
+        res.status(201).send(newBlogger)
     }
 })
+app.put('/bloggers/:id', (req: Request, res: Response) => {
+    let name = req.body.name
+    let youtubeUrl = req.body.youtubeUrl
 
+    const regEx = new RegExp('^https:\\/\\/([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
+    const found = regEx.test(youtubeUrl)
+
+    let errors = []
+
+    if (!name || typeof name !== 'string' || !name.trim() || name.length > 15) {
+        errors.push({
+            message: "Incorrect name",
+            field: "name"
+        })
+    }
+
+    if (!youtubeUrl || typeof youtubeUrl !== 'string' || !youtubeUrl.trim() || youtubeUrl.length > 100 || !found) {
+        errors.push({
+            message: "Incorrect youtubeUrl",
+            field: "youtubeUrl"
+        })
+    }
+
+    if (errors.length >0) {
+        res.status(400).send({errorsMessages: errors})
+    } else {
+        const id = +req.params.id
+        const blogger = bloggers.find(item => item.id === id)
+        if (blogger) {
+            blogger.name = name
+            blogger.youtubeUrl = youtubeUrl
+            res.status(204).send(bloggers)
+        } else {
+            res.send(404)
+        }
+    }
+})
 app.delete('/bloggers/:id', (req: Request, res: Response) => {
     const id = +req.params.id
-    if (id) {
-        bloggers = bloggers.filter(i => i.id !== +req.params.id)
-        res.sendStatus(204)
+
+    if (!id) {
+        res.status(404)
+    }
+
+    const newBloggers = bloggers.filter(item => { return item.id !== id })
+
+    if (newBloggers.length < bloggers.length) {
+        bloggers = newBloggers
+        res.send(204)
     } else {
-        res.sendStatus(404)
+        res.send(404)
     }
 })
-
-// Posts
 
 app.get('/posts', (req: Request, res: Response) => {
     res.status(200).send(posts)
 })
+app.get('/posts/:id', (req: Request, res: Response) => {
+    const id = +req.params.id
+    if(typeof id !== 'number') {
+        res.send(400)
+        return
+    }
+    const post = posts.find(p => p.id === id)
+    if (post) {
+        res.status(200).send(post)
+    }else {
+        res.send(404)
+    }
+})
+app.post('/posts',  (req: Request, res: Response) => {
 
-app.post('/posts', (req: Request, res: Response) => {
-    const body = req.body
-    if (body) {
-        res.status(201).send({
-            ...body,
-            id: posts.length + 1,
-            bloggerName: bloggers.find(i => i.id === body.bloggerId)?.name
+    let errors = []
+
+    const title = req.body.title
+    const shortDescription = req.body.shortDescription
+    const content = req.body.content
+    const bloggerId = +req.body.bloggerId
+
+    if (title === null || !title || typeof title !== 'string' || !title.trim() || title.length > 30) {
+        errors.push({
+            message: "string",
+            field: "title"
         })
-    } else {
-        res.sendStatus(400)
     }
-})
 
-app.get('/posts:id', (req: Request, res: Response) => {
+    if (shortDescription ===null || !shortDescription || typeof shortDescription !== 'string' || !shortDescription.trim() || shortDescription.length > 100) {
+        errors.push({
+            message: "Invalid shortDescription",
+            field: "shortDescription"
+        })
+    }
+
+    if (content === null || !content || typeof content !== 'string' || !content.trim() || content.length > 1000) {
+        errors.push({
+            message: "Invalid content!",
+            field: "content"
+        })
+    }
+
+    if (!bloggers.find(blogger => blogger.id === bloggerId)) {
+        errors.push({
+            message: "Invalid bloggerId!",
+            field: "bloggerId"
+        })
+    }
+
+
+    if (errors.length > 0) {
+        res.status(400).send({errorsMessages: errors})
+    }
+
+    const newPost = {
+        bloggerId: +req.body.bloggerId,
+        bloggerName: req.body.title,
+        id: +(new Date()),
+        title: req.body.title,
+        shortDescription: req.body.shortDescription,
+        content: req.body.content
+    }
+
+    posts.push(newPost)
+    res.status(201).send(newPost)
+
+})
+app.put('/posts/:id',  (req: Request, res: Response) => {
+
+    const title = req.body.title
+    const shortDescription = req.body.shortDescription
+    const content = req.body.content
+    const bloggerId = +req.body.bloggerId
+
+    let errors = []
+
+    if (title === null || !title || typeof title !== 'string' || !title.trim() || title.length > 30) {
+        errors.push({
+            message: "string",
+            field: "title"
+        })
+    }
+
+    if (shortDescription ===null || !shortDescription || typeof shortDescription !== 'string' || !shortDescription.trim() || shortDescription.length > 100) {
+        errors.push({
+            message: "Invalid shortDescription",
+            field: "shortDescription"
+        })
+    }
+
+    if (content === null || !content || typeof content !== 'string' || !content.trim() || content.length > 1000) {
+        errors.push({
+            message: "Invalid content!",
+            field: "content"
+        })
+    }
+
+    if (!bloggers.find(blogger => blogger.id === bloggerId)) {
+        errors.push({
+            message: "Invalid bloggerId!",
+            field: "bloggerId"
+        })
+    }
+
+    if (errors.length > 0) {
+        res.status(400).send({errorsMessages: errors})
+    }
+
     const id = +req.params.id
-    const post = bloggers.find(i => i.id === id)
+    const post = posts.find(item => item.id === id)
     if (post) {
-        res.sendStatus(200).send(post)
-    }
-})
-
-
-app.put('/posts:id', (req: Request, res: Response) => {
-    const id = +req.params.id
-    const post = posts.find(i => i.id === id)
-    if (post) {
-        if (req.body.hasOwnProperty('title') && req.body.hasOwnProperty('shortDescription') && req.body.hasOwnProperty('content') && req.body.hasOwnProperty('bloggerId')) {
-            post.title = req.body.title
-            post.shortDescription = req.body.shortDescription
-            post.content = req.body.content
-            post.bloggerId = req.body.bloggerId
-        } else {
-            res.sendStatus(400)
-        }
-        res.sendStatus(204)
+        post.title = title,
+            post.shortDescription = shortDescription,
+            post.content = content,
+            post.bloggerId = bloggerId,
+            res.status(204).send(posts)
     } else {
-        res.sendStatus(404)
+        res.send(404)
     }
 })
-
-app.delete('/posts:id', (req: Request, res: Response) => {
+app.delete('/posts/:id',  (req: Request, res: Response) => {
     const id = +req.params.id
-    if (id) {
-        posts = posts.filter(i => i.id !== +req.params.id)
-        res.sendStatus(204)
+
+    if (!id) {
+        res.status(404)
+    }
+
+    const newPosts = posts.filter(item => { return item.id !== id })
+
+    if (newPosts.length < posts.length) {
+        posts = newPosts
+        res.send(204)
     } else {
-        res.sendStatus(404)
+        res.send(404)
     }
 })
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`)
+    })
