@@ -59,7 +59,7 @@ app.post('/bloggers',  (req: Request, res: Response) => {
     }
 
     if (errors.length >0) {
-        res.status(401).send({errorsMessages: errors})
+        res.status(400).send({errorsMessages: errors})
     } else {
         const newBlogger = {
             id: +(new Date()),
@@ -94,7 +94,7 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
     }
 
     if (errors.length >0) {
-        res.status(401).send({errorsMessages: errors})
+        res.status(400).send({errorsMessages: errors})
     } else {
         const id = +req.params.id
         const blogger = bloggers.find(item => item.id === id)
@@ -111,7 +111,7 @@ app.delete('/bloggers/:id', (req: Request, res: Response) => {
     const id = +req.params.id
 
     if (!id) {
-        res.status(401)
+        res.status(404)
     }
 
     const newBloggers = bloggers.filter(item => { return item.id !== id })
@@ -179,7 +179,7 @@ app.post('/posts',  (req: Request, res: Response) => {
 
 
     if (errors.length > 0) {
-        res.status(401).send({errorsMessages: errors})
+        res.status(400).send({errorsMessages: errors})
     }
 
     const newPost = {
@@ -233,7 +233,7 @@ app.put('/posts/:id',  (req: Request, res: Response) => {
     }
 
     if (errors.length > 0) {
-        res.status(401).send({errorsMessages: errors})
+        res.status(400).send({errorsMessages: errors})
     }
 
     const id = +req.params.id
