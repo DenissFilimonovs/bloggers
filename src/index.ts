@@ -43,6 +43,11 @@ app.post('/bloggers',  (req: Request, res: Response) => {
 
 
     let errors = []
+    const authorized = req.headers;
+    if (!authorized) {
+        res.status(401).send("unAthourized");
+        return;
+    }
 
     if (!name || typeof name !== 'string' || !name.trim() || name.length > 15) {
         errors.push({
@@ -78,6 +83,11 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
     const found = regEx.test(youtubeUrl)
 
     let errors = []
+    const authorized = req.headers;
+    if (!authorized) {
+        res.status(401).send("unAthourized");
+        return;
+    }
 
     if (!name || typeof name !== 'string' || !name.trim() || name.length > 15) {
         errors.push({
@@ -112,6 +122,11 @@ app.delete('/bloggers/:id', (req: Request, res: Response) => {
 
     if (!id) {
         res.status(404)
+    }
+    const authorized = req.headers;
+    if (!authorized) {
+        res.status(401).send("unAthourized");
+        return;
     }
 
     const newBloggers = bloggers.filter(item => { return item.id !== id })
@@ -148,6 +163,11 @@ app.post('/posts',  (req: Request, res: Response) => {
     const shortDescription = req.body.shortDescription
     const content = req.body.content
     const bloggerId = +req.body.bloggerId
+    const authorized = req.headers;
+    if (!authorized) {
+        res.status(401).send("unAthourized");
+        return;
+    }
 
     if (title === null || !title || typeof title !== 'string' || !title.trim() || title.length > 30) {
         errors.push({
@@ -203,6 +223,11 @@ app.put('/posts/:id',  (req: Request, res: Response) => {
     const bloggerId = +req.body.bloggerId
 
     let errors = []
+    const authorized = req.headers;
+    if (!authorized) {
+        res.status(401).send("unAthourized");
+        return;
+    }
 
     if (title === null || !title || typeof title !== 'string' || !title.trim() || title.length > 30) {
         errors.push({
@@ -250,6 +275,11 @@ app.put('/posts/:id',  (req: Request, res: Response) => {
 })
 app.delete('/posts/:id',  (req: Request, res: Response) => {
     const id = +req.params.id
+    const authorized = req.headers;
+    if (!authorized) {
+        res.status(401).send("unAthourized");
+        return;
+    }
 
     if (!id) {
         res.status(404)
