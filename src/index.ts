@@ -140,7 +140,7 @@ app.get('/posts/:id', (req: Request, res: Response) => {
         res.send(404)
     }
 })
-app.post('/posts',   (req: Request, res: Response) => {
+app.post('/posts',  (req: Request, res: Response) => {
 
     let errors = []
 
